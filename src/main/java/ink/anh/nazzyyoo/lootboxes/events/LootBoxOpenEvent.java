@@ -46,49 +46,50 @@ public class LootBoxOpenEvent extends Sender implements Listener {
         Location loc = block.getLocation();
         LootBox lootBox = boxManager.getLootBox(loc);
         
-        if (player.isSneaking() == false) {
+        if (lootBox != null) {
+    		
+    		// Якщо в руках спец предмет, то зупинити цей код
+    		ItemStack item = player.getInventory().getItemInMainHand();
+            ItemMeta itemMeta = item.getItemMeta();
+            
+            if (itemMeta != null) {
+                String loottable = itemMeta.getPersistentDataContainer().get(new NamespacedKey(lootBoxes, "lootTable"), PersistentDataType.STRING);
+                if (loottable == null) return;
+                
+                String cooldownSeconds = itemMeta.getPersistentDataContainer().get(new NamespacedKey(lootBoxes, "cooldownSeconds"), PersistentDataType.STRING);
+                if (cooldownSeconds != null) return;
+            }
         	
-        	if (lootBox != null) {
-        		
-        		// Якщо в руках спец предмет, то зупинити цей код
-        		ItemStack item = player.getInventory().getItemInMainHand();
-                ItemMeta itemMeta = item.getItemMeta();
-                
-                if (itemMeta != null) {
-                    String loottable = itemMeta.getPersistentDataContainer().get(new NamespacedKey(lootBoxes, "lootTable"), PersistentDataType.STRING);
-                    String cooldownSeconds = itemMeta.getPersistentDataContainer().get(new NamespacedKey(lootBoxes, "cooldownSeconds"), PersistentDataType.STRING);
-                    if (loottable != null && cooldownSeconds != null) {
-                    	return;
-                    }
-                }
+            if (LootBoxCooldown.isCooldownExpired(player, lootBox) == true) {
+            	System.err.println("Opening LootBox...");
             	
-                if (LootBoxCooldown.isCooldownExpired(player, loc) == true) {
-            		event.setCancelled(true);
-            		
-            		lootBox.addLootedPlayer(player.getUniqueId());
-                	
-                    LootBoxesDrop.dropLootBoxContents(lootBox, loc);
-                    
-                    String sound = "BLOCK_CHEST_OPEN";
-                    SoundCategory category = SoundCategory.MASTER;
-                    float volume = 1;
-                    float pitch = 0.2f;
-                    loc.getWorld().playSound(loc, sound, category, volume, pitch);
-                    
-                    return;
+            	event.setCancelled(true);
+        		
+        		lootBox.addLootedPlayer(player.getUniqueId());
+            	
+                LootBoxesDrop.dropLootBoxContents(lootBox, loc);
                 
-                } else {
-                    String message = Translator.translateKyeWorld(libraryManager, "lootboxes_player_cant_open_cd", LangUtils.getPlayerLanguage(player));
-                    MessageComponents messageComponents = MessageComponents.builder()
-                            .content(message)
-                            .hexColor("#FFD700")
-                            .build();
-                        
-                    Messenger.sendActionBar(LootBoxes.getInstance(), player, messageComponents, message);
+                String sound = "BLOCK_CHEST_OPEN";
+                SoundCategory category = SoundCategory.MASTER;
+                float volume = 1;
+                float pitch = 0.2f;
+                loc.getWorld().playSound(loc, sound, category, volume, pitch);
+                
+                return;
+            
+            } else {
+                String message = Translator.translateKyeWorld(libraryManager, "lootboxes_player_cant_open_cd", LangUtils.getPlayerLanguage(player));
+                MessageComponents messageComponents = MessageComponents.builder()
+                        .content(message)
+                        .hexColor("#FFD700")
+                        .build();
                     
-                    return;
-                }
-            } else return;
+                Messenger.sendActionBar(LootBoxes.getInstance(), player, messageComponents, message);
+                
+                return;
+            }
+        } else {
+        	System.err.println("LootBox is null");
         }
     }
 }

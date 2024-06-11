@@ -78,7 +78,7 @@ public class LootTableManager {
         for (String itemKey : tableSection.getKeys(false)) {
             ConfigurationSection itemSection = tableSection.getConfigurationSection(itemKey);
             
-            ItemStack item = ItemStackSerializer.deserializeItemStack(itemKey);
+            ItemStack item = ItemStackSerializer.deserializeItemStackFromYaml(itemKey);
             int chance = itemSection.getInt("chance");
             int minQuantity = itemSection.getInt("min_quantity");
             int maxQuantity = itemSection.getInt("max_quantity");
@@ -112,7 +112,7 @@ public class LootTableManager {
         for (int i = 0; i < lootItems.length; i++) {
             LootItem lootItem = lootItems[i];
             ConfigurationSection itemSection = tableSection.createSection("items.item" + i);
-            itemSection.set("item", ItemStackSerializer.serializeItemStack(lootItem.getItem()));
+            itemSection.set("item", ItemStackSerializer.serializeItemStackToYaml(lootItem.getItem()));
             itemSection.set("chance", lootItem.getChance());
             itemSection.set("min_quantity", lootItem.getMinQuantity());
             itemSection.set("max_quantity", lootItem.getMaxQuantity());
