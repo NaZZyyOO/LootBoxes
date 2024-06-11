@@ -28,7 +28,6 @@ public class LootBoxCooldown {
             
             Map<UUID, Integer> lootedPlayers = lootBox.getLootedPlayers();
             int lootedTime = lootedPlayers.get(playerUUID);
-            
             int cooldownSeconds = lootBox.getCooldown();
             int lootTime = lootedTime + cooldownSeconds;
             
