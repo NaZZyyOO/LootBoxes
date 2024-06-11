@@ -27,9 +27,10 @@ import ink.anh.nazzyyoo.lootboxes.utils.LootBoxCooldown;
 public class LootBoxOpenEvent extends Sender implements Listener {
     
 	private LootBoxes lootBoxes;
-	
-	public LootBoxOpenEvent(LootBoxes LootBoxes) {
-    	super(LootBoxes.getGlobalManager());
+
+    public LootBoxOpenEvent(LootBoxes lootBoxes) {
+    	super(lootBoxes.getGlobalManager());
+    	this.lootBoxes = lootBoxes;
     }
 
     @EventHandler
@@ -39,11 +40,12 @@ public class LootBoxOpenEvent extends Sender implements Listener {
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
         
-        if (block == null || block.getType() == Material.AIR) {
+        Location loc = block.getLocation();
+        
+        if (loc == null || block.getType() == Material.AIR) {
             return;
         }
 
-        Location loc = block.getLocation();
         LootBox lootBox = boxManager.getLootBox(loc);
         
         if (lootBox != null) {
@@ -59,11 +61,12 @@ public class LootBoxOpenEvent extends Sender implements Listener {
                 String cooldownSeconds = itemMeta.getPersistentDataContainer().get(new NamespacedKey(lootBoxes, "cooldownSeconds"), PersistentDataType.STRING);
                 if (cooldownSeconds != null) return;
             }
-        	
+           
+            event.setCancelled(true);
+            
             if (LootBoxCooldown.isCooldownExpired(player, lootBox) == true) {
             	System.err.println("Opening LootBox...");
             	
-            	event.setCancelled(true);
         		
         		lootBox.addLootedPlayer(player.getUniqueId());
             	

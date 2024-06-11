@@ -51,6 +51,7 @@ public class LootBoxTable extends AbstractTable<LootBox> {
                 ps.setString(4, serializeLootedPlayers(lootBox.getLootedPlayers()));
                 ps.setInt(5, lootBox.getCooldown());
                 ps.executeUpdate();
+                System.out.println("Successfully added LootBox with hashCode: " + lootBox.getLocation().hashCode());
             }
         }, "Failed to insert LootBox");
     }
@@ -90,9 +91,9 @@ public class LootBoxTable extends AbstractTable<LootBox> {
                 ps.setInt(1, lootBox.getLocation().hashCode());
                 int rowsAffected = ps.executeUpdate();
                 if (rowsAffected == 0) {
-                    System.err.println("Failed to delete LootBox with hashCode: " + lootBox.hashCode() + ". No rows affected.");
+                    System.err.println("Failed to delete LootBox with hashCode: " + lootBox.getLocation().hashCode() + ". No rows affected.");
                 } else {
-                    System.out.println("Successfully deleted LootBox with hashCode: " + lootBox.hashCode());
+                    System.out.println("Successfully deleted LootBox with hashCode: " + lootBox.getLocation().hashCode());
                 }
             }
         }, "Failed to delete LootBox");

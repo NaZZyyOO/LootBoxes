@@ -197,6 +197,9 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
                 String item_name = itemStack.getItemMeta().getDisplayName();
                 if (item_name == null ) {
                 	item_name = itemStack.getType().getItemTranslationKey();
+                	if (item_name == null) {
+                		item_name = itemSaveMethod;
+                	}
                 }
                 sendMessage(new MessageForFormatting("lootboxes_loottable_item_added", new String[] {tableName, item_name }), MessageType.NORMAL, sender);
                 return true;
@@ -226,13 +229,14 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
         
         if (lootTable != null) {
             ItemStack itemStack = null;
+            String itemSaveMethod = args[2];
             
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 
-                if (args[2].equals("hand")) {
+                if (itemSaveMethod.equals("hand")) {
                     itemStack = player.getInventory().getItemInMainHand();
-                } else if (args[2].equals("offhand")) {
+                } else if (itemSaveMethod.equals("offhand")) {
                     itemStack = player.getInventory().getItemInOffHand();
                 }
             }
@@ -246,6 +250,9 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
                 
                 if (item_name == null ) {
                 	item_name = itemStack.getType().getItemTranslationKey();
+                	if (item_name == null) {
+                		item_name = itemSaveMethod;
+                	}
                 }
                 sendMessage(new MessageForFormatting("lootboxes_loottable_item_deleted", new String[] {tableName, item_name }), MessageType.NORMAL, sender);
                 return true;
