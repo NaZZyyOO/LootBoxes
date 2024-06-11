@@ -2,12 +2,16 @@ package ink.anh.nazzyyoo.lootboxes.events;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import ink.anh.api.lingo.Translator;
 import ink.anh.api.messages.MessageComponents;
@@ -22,6 +26,8 @@ import ink.anh.nazzyyoo.lootboxes.utils.LootBoxCooldown;
 
 public class LootBoxOpenEvent extends Sender implements Listener {
     
+	private LootBoxes lootBoxes;
+	
 	public LootBoxOpenEvent(LootBoxes LootBoxes) {
     	super(LootBoxes.getGlobalManager());
     }
@@ -43,9 +49,21 @@ public class LootBoxOpenEvent extends Sender implements Listener {
         if (player.isSneaking() == false) {
         	
         	if (lootBox != null) {
-            	event.setCancelled(true);
+        		
+        		// Якщо в руках спец предмет, то зупинити цей код
+        		ItemStack item = player.getInventory().getItemInMainHand();
+                ItemMeta itemMeta = item.getItemMeta();
+                
+                if (itemMeta != null) {
+                    String loottable = itemMeta.getPersistentDataContainer().get(new NamespacedKey(lootBoxes, "lootTable"), PersistentDataType.STRING);
+                    String cooldownSeconds = itemMeta.getPersistentDataContainer().get(new NamespacedKey(lootBoxes, "cooldownSeconds"), PersistentDataType.STRING);
+                    if (loottable != null && cooldownSeconds != null) {
+                    	return;
+                    }
+                }
             	
-            	if (LootBoxCooldown.isCooldownExpired(player, loc)) {
+                if (LootBoxCooldown.isCooldownExpired(player, loc) == true) {
+            		event.setCancelled(true);
             		
             		lootBox.addLootedPlayer(player.getUniqueId());
                 	
@@ -70,7 +88,7 @@ public class LootBoxOpenEvent extends Sender implements Listener {
                     
                     return;
                 }
-            }
+            } else return;
         }
     }
 }

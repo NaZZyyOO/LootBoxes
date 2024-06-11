@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class LootBox {
+	
 	private Location location;
     private String lootTableName;
     private Map<UUID, Integer> lootedPlayers;

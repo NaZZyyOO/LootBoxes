@@ -84,12 +84,15 @@ public class LootBoxesMarking extends Sender implements Listener {
                     player.spawnParticle(Particle.REDSTONE, loc, 60, 1f, 0f, 1f, dustOptions);
                     event.setCancelled(true);
                     
+                    return;
+                    
                 } catch (NumberFormatException e) {
                     sendMessage(new MessageForFormatting("lootboxes_invalid_cooldown", new String[]{}), MessageType.ERROR, player);
                     e.printStackTrace();
                 }
             }
         }
+        return;
     }
 
 
