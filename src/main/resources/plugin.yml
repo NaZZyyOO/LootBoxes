@@ -1,0 +1,10 @@
+main: ink.anh.nazzyyoo.lootboxes.LootBoxes
+name: LootBoxes
+version: 0.1
+author: NaZZyyOO
+api-version: 1.13
+depend: [AnhyLibAPI]
+description: LootBoxes is a plugin that allows you to create different loot tables and use them to create loot boxes
+commands:
+    lootboxes:
+        aliases: [configcreatingcommands]
