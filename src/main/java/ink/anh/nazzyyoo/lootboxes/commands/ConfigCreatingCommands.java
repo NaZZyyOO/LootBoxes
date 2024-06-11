@@ -180,7 +180,7 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
             }
 
             if (itemStack != null) {
-                String serializedItem = ItemStackSerializer.serializeItemStackToYaml(itemStack);
+                String serializedItem = ItemStackSerializer.serializeItemStack(itemStack);
                 
                 Double chance = Double.parseDouble(args[3]);
                 itemData.put("chance", chance);
@@ -242,7 +242,7 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
             }
 
             if (itemStack != null) {
-                String serializedItem = ItemStackSerializer.serializeItemStackToYaml(itemStack);
+                String serializedItem = ItemStackSerializer.serializeItemStack(itemStack);
                 lootTable.remove(serializedItem);
                 saveLootTables();
                 
