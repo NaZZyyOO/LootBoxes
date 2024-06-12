@@ -39,7 +39,6 @@ public class LootBoxOpenEvent extends Sender implements Listener {
     	
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
-        
         Location loc = block.getLocation();
         
         if (loc == null || block.getType() == Material.AIR) {
@@ -65,18 +64,15 @@ public class LootBoxOpenEvent extends Sender implements Listener {
             event.setCancelled(true);
             
             if (LootBoxCooldown.isCooldownExpired(player, lootBox) == true) {
-            	System.err.println("Opening LootBox...");
-            	
         		
         		lootBox.addLootedPlayer(player.getUniqueId());
             	
                 LootBoxesDrop.dropLootBoxContents(lootBox, loc);
                 
                 String sound = "BLOCK_CHEST_OPEN";
-                SoundCategory category = SoundCategory.MASTER;
                 float volume = 1;
                 float pitch = 0.2f;
-                loc.getWorld().playSound(loc, sound, category, volume, pitch);
+                loc.getWorld().playSound(loc, sound, volume, pitch);
                 
                 return;
             
@@ -92,7 +88,7 @@ public class LootBoxOpenEvent extends Sender implements Listener {
                 return;
             }
         } else {
-        	System.err.println("LootBox is null");
+        	return;
         }
     }
 }

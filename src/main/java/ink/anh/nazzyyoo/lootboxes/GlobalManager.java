@@ -2,7 +2,6 @@ package ink.anh.nazzyyoo.lootboxes;
 
 import java.io.File;
 import java.io.IOException;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -13,6 +12,7 @@ import ink.anh.api.database.SQLiteDatabaseManager;
 import ink.anh.api.lingo.Translator;
 import ink.anh.api.lingo.lang.LanguageManager;
 import ink.anh.api.messages.Logger;
+import ink.anh.api.utils.SyncExecutor;
 import ink.anh.nazzyyoo.lootboxes.lootbox.TableRegistry;
 import net.md_5.bungee.api.ChatColor;
 
@@ -122,7 +122,7 @@ public class GlobalManager extends LibraryManager {
     // Reloads the plugin's configuration.
     public boolean reload() {
         // Asynchronously reloads the plugin configuration.
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+    	SyncExecutor.runAsync(() -> {
             try {
                 saveDefaultConfig();
                 plugin.reloadConfig();

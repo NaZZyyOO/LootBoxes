@@ -18,29 +18,29 @@ public class LootBoxCooldown {
         UUID playerUUID = player.getUniqueId();
 
         if (lootBox == null) {
-        	System.err.println("LootBox is null.");
             return false;
         }
 
-        if (lootBox.hasLooted(playerUUID)) {
+        if (lootBox.hasLooted(playerUUID) == true) {
             int currentTimeSecs = (int) (System.currentTimeMillis() / 1000);
             
             Map<UUID, Integer> lootedPlayers = lootBox.getLootedPlayers();
+            
             int lootedTime = lootedPlayers.get(playerUUID);
+            
             int cooldownSeconds = lootBox.getCooldown();
             int lootTime = lootedTime + cooldownSeconds;
             
-            System.err.println(lootTime + lootedTime);
-            
             if (currentTimeSecs >= lootTime) {
-            	System.err.println(currentTimeSecs + "more than" + lootTime );
             	lootBox.getLootedPlayers().remove(playerUUID);
                 lootBoxManager.updateLootBox(lootBox);
                 return true;
             }
             return false;
+        } else {
+        	lootBox.getLootedPlayers().remove(playerUUID);
+            lootBoxManager.updateLootBox(lootBox);
+            return true;
         }
-
-        return false;
     }
 }

@@ -36,7 +36,11 @@ public class LootBox {
     }
 
     public boolean hasLooted(UUID playerUUID) {
-        return lootedPlayers.containsKey(playerUUID);
+        if (lootedPlayers.containsKey(playerUUID) == true) {
+        	return true;
+        } else {
+        	return false;
+        }
     }
     
     public void setLocation(Location location) {
