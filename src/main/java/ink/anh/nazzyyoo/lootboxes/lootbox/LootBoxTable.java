@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import ink.anh.api.database.AbstractTable;
 import ink.anh.api.LibraryManager;
 import ink.anh.api.database.TableField;
-import ink.anh.api.utils.SyncExecutor;
 
 import org.bukkit.Location;
 
