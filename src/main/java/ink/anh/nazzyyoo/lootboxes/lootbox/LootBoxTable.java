@@ -16,15 +16,12 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class LootBoxTable extends AbstractTable<LootBox> {
 
     private static final String TABLE_NAME = "LootBox";
     private final Gson gson = new Gson();
-    private final ExecutorService executor = Executors.newCachedThreadPool();
+
 
     public LootBoxTable(LibraryManager manager) {
         super(manager, TABLE_NAME);
@@ -49,92 +46,81 @@ public class LootBoxTable extends AbstractTable<LootBox> {
     @Override
     public void insert(LootBox lootBox) {
         String insertSQL = "INSERT INTO " + dbName + " (hash_code, location, lootTableName, lootedPlayers, cooldown) VALUES (?, ?, ?, ?, ?);";
-        SyncExecutor.runAsync(() -> {
-        	
-            executeTransaction(conn -> {
-                try (PreparedStatement ps = conn.prepareStatement(insertSQL)) {
-                    ps.setInt(1, lootBox.getLocation().hashCode());
-                    ps.setString(2, serializeLocation(lootBox.getLocation()));
-                    ps.setString(3, lootBox.getLootTableName());
-                    ps.setString(4, serializeLootedPlayers(lootBox.getLootedPlayers()));
-                    ps.setInt(5, lootBox.getCooldown());
-                    ps.executeUpdate();
-                    System.out.println("Successfully added LootBox with hashCode: " + lootBox.getLocation().hashCode());
-                }
-            }, "Failed to insert LootBox");
-        });
+        executeTransaction(conn -> {
+            try (PreparedStatement ps = conn.prepareStatement(insertSQL)) {
+                ps.setInt(1, lootBox.getLocation().hashCode());
+                ps.setString(2, serializeLocation(lootBox.getLocation()));
+                ps.setString(3, lootBox.getLootTableName());
+                ps.setString(4, serializeLootedPlayers(lootBox.getLootedPlayers()));
+                ps.setInt(5, lootBox.getCooldown());
+                ps.executeUpdate();
+                System.out.println("Successfully added LootBox with hashCode: " + lootBox.getLocation().hashCode());
+            }
+        }, "Failed to insert LootBox");
     }
 
     @Override
     public void update(LootBox lootBox) {
         String updateSQL = "UPDATE " + dbName + " SET location = ?, lootTableName = ?, lootedPlayers = ?, cooldown = ? WHERE hash_code = ?;";
-        SyncExecutor.runAsync(() -> {
-            executeTransaction(conn -> {
-                try (PreparedStatement ps = conn.prepareStatement(updateSQL)) {
-                    ps.setString(1, serializeLocation(lootBox.getLocation()));
-                    ps.setString(2, lootBox.getLootTableName());
-                    ps.setString(3, serializeLootedPlayers(lootBox.getLootedPlayers()));
-                    ps.setInt(4, lootBox.getCooldown());
-                    ps.setInt(5, lootBox.getLocation().hashCode());
-                    ps.executeUpdate();
-                }
-            }, "Failed to update LootBox");
-        });
+        executeTransaction(conn -> {
+            try (PreparedStatement ps = conn.prepareStatement(updateSQL)) {
+                ps.setString(1, serializeLocation(lootBox.getLocation()));
+                ps.setString(2, lootBox.getLootTableName());
+                ps.setString(3, serializeLootedPlayers(lootBox.getLootedPlayers()));
+                ps.setInt(4, lootBox.getCooldown());
+                ps.setInt(5, lootBox.getLocation().hashCode());
+                ps.executeUpdate();
+            }
+        }, "Failed to update LootBox");
     }
 
     @Override
     public <K> void updateField(TableField<K> tableField) {
         String updateSQL = "UPDATE " + dbName + " SET " + tableField.getFieldName() + " = ? WHERE hash_code = ?;";
-        SyncExecutor.runAsync(() -> {
-            executeTransaction(conn -> {
-                try (PreparedStatement ps = conn.prepareStatement(updateSQL)) {
-                    ps.setObject(1, tableField.getFieldValue());
-                    ps.setString(2, tableField.getKey().toString());
-                    ps.executeUpdate();
-                }
-            }, "Failed to update field: " + tableField.getFieldName());
-        });
+        executeTransaction(conn -> {
+            try (PreparedStatement ps = conn.prepareStatement(updateSQL)) {
+                ps.setObject(1, tableField.getFieldValue());
+                ps.setString(2, tableField.getKey().toString());
+                ps.executeUpdate();
+            }
+        }, "Failed to update field: " + tableField.getFieldName());
     }
 
     @Override
     public void delete(LootBox lootBox) {
         String deleteSQL = "DELETE FROM " + dbName + " WHERE hash_code = ?;";
-        SyncExecutor.runAsync(() -> {
-            executeTransaction(conn -> {
-                try (PreparedStatement ps = conn.prepareStatement(deleteSQL)) {
-                    ps.setInt(1, lootBox.getLocation().hashCode());
-                    int rowsAffected = ps.executeUpdate();
-                    if (rowsAffected == 0) {
-                        System.err.println("Failed to delete LootBox with hashCode: " + lootBox.getLocation().hashCode() + ". No rows affected.");
-                    } else {
-                        System.out.println("Successfully deleted LootBox with hashCode: " + lootBox.getLocation().hashCode());
-                    }
+        executeTransaction(conn -> {
+            try (PreparedStatement ps = conn.prepareStatement(deleteSQL)) {
+                ps.setInt(1, lootBox.getLocation().hashCode());
+                int rowsAffected = ps.executeUpdate();
+                if (rowsAffected == 0) {
+                    System.err.println("Failed to delete LootBox with hashCode: " + lootBox.getLocation().hashCode() + ". No rows affected.");
+                } else {
+                    System.out.println("Successfully deleted LootBox with hashCode: " + lootBox.getLocation().hashCode());
                 }
-            }, "Failed to delete LootBox");
-        });
+            }
+        }, "Failed to delete LootBox");
     }
 
     public LootBox getLootBox(int hashCode) {
         String selectSQL = "SELECT * FROM " + dbName + " WHERE hash_code = ?;";
         LootBox[] lootBox = {null};
 
-        SyncExecutor.runAsync(() -> {
-        	executeTransaction(conn -> {
-                try (PreparedStatement ps = conn.prepareStatement(selectSQL)) {
-                    ps.setInt(1, hashCode);
-                    try (ResultSet rs = ps.executeQuery()) {
-                        if (rs.next()) {
-                            Location location = deserializeLocation(rs.getString("location"));
-                            String lootTableName = rs.getString("lootTableName");
-                            String lootedPlayersStr = rs.getString("lootedPlayers");
-                            int cooldown = rs.getInt("cooldown");
-                            Map<UUID, Integer> lootedPlayers = deserializeLootedPlayers(lootedPlayersStr);
-                            lootBox[0] = new LootBox(location, lootTableName, cooldown, lootedPlayers);
-                        }
+        executeTransaction(conn -> {
+            try (PreparedStatement ps = conn.prepareStatement(selectSQL)) {
+                ps.setInt(1, hashCode);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        Location location = deserializeLocation(rs.getString("location"));
+                        String lootTableName = rs.getString("lootTableName");
+                        String lootedPlayersStr = rs.getString("lootedPlayers");
+                        int cooldown = rs.getInt("cooldown");
+                        Map<UUID, Integer> lootedPlayers = deserializeLootedPlayers(lootedPlayersStr);
+                        lootBox[0] = new LootBox(location, lootTableName, cooldown, lootedPlayers);
                     }
                 }
-            }, "Failed to retrieve LootBox with hash_code: " + hashCode);
-        });
+            }
+        }, "Failed to retrieve LootBox with hash_code: " + hashCode);
 
         return lootBox[0];
     }
@@ -143,24 +129,21 @@ public class LootBoxTable extends AbstractTable<LootBox> {
         String selectSQL = "SELECT * FROM " + dbName + ";";
         Map<Integer, LootBox> lootBoxes = new HashMap<>();
 
-        SyncExecutor.runAsync(() -> {
-        	executeTransaction(conn -> {
-                try (Statement stmt = conn.createStatement();
-                     ResultSet rs = stmt.executeQuery(selectSQL)) {
-                    while (rs.next()) {
-                        Location location = deserializeLocation(rs.getString("location"));
-                        int hashCode = location.hashCode();
-                        String lootTableName = rs.getString("lootTableName");
-                        String lootedPlayersStr = rs.getString("lootedPlayers");
-                        int cooldown = rs.getInt("cooldown");
-                        Map<UUID, Integer> lootedPlayers = deserializeLootedPlayers(lootedPlayersStr);
-                        LootBox lootBox = new LootBox(location, lootTableName, cooldown, lootedPlayers);
-                        lootBoxes.put(hashCode, lootBox);
-                    }
+        executeTransaction(conn -> {
+            try (Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery(selectSQL)) {
+                while (rs.next()) {
+                    Location location = deserializeLocation(rs.getString("location"));
+                    int hashCode = location.hashCode();
+                    String lootTableName = rs.getString("lootTableName");
+                    String lootedPlayersStr = rs.getString("lootedPlayers");
+                    int cooldown = rs.getInt("cooldown");
+                    Map<UUID, Integer> lootedPlayers = deserializeLootedPlayers(lootedPlayersStr);
+                    LootBox lootBox = new LootBox(location, lootTableName, cooldown, lootedPlayers);
+                    lootBoxes.put(hashCode, lootBox);
                 }
-            }, "Failed to retrieve all LootBoxes");
-
-        });
+            }
+        }, "Failed to retrieve all LootBoxes");
         
         return lootBoxes;
     }
