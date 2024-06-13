@@ -3,6 +3,7 @@ package ink.anh.nazzyyoo.lootboxes.events;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,6 +39,10 @@ public class LootBoxOpenEvent extends Sender implements Listener {
     	
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
+        if (block == null) {
+        	return;
+        }
+        
         Location loc = block.getLocation();
         
         if (loc == null || block.getType() == Material.AIR) {
@@ -68,7 +73,7 @@ public class LootBoxOpenEvent extends Sender implements Listener {
             	
                 LootBoxesDrop.dropLootBoxContents(lootBox, loc);
                 
-                String sound = "BLOCK_CHEST_OPEN";
+                Sound sound = Sound.BLOCK_CHEST_OPEN;
                 float volume = 1;
                 float pitch = 0.2f;
                 loc.getWorld().playSound(loc, sound, volume, pitch);
