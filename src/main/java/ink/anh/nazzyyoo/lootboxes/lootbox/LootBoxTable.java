@@ -131,7 +131,7 @@ public class LootBoxTable extends AbstractTable<LootBox> {
         executeTransaction(conn -> {
             try (Statement stmt = conn.createStatement();
                  ResultSet rs = stmt.executeQuery(selectSQL)) {
-                while (rs.next()) {
+                 while (rs.next()) {
                     Location location = deserializeLocation(rs.getString("location"));
                     int hashCode = location.hashCode();
                     String lootTableName = rs.getString("lootTableName");

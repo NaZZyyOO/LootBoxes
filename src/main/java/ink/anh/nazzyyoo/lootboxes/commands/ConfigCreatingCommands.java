@@ -7,6 +7,7 @@ import ink.anh.api.items.ItemStackSerializer;
 import ink.anh.api.messages.MessageForFormatting;
 import ink.anh.api.messages.MessageType;
 import ink.anh.api.messages.Sender;
+import ink.anh.api.utils.SyncExecutor;
 import ink.anh.nazzyyoo.lootboxes.LootBoxes;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootTableManager;
 
@@ -39,28 +40,34 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (args.length > 0) {
-            switch (args[0].toLowerCase()) {
-                
-                case "create":
-                    return createLootTable(sender, args);
-                
-                case "delete":
-                    return deleteLootTable(sender, args);
-                
-                case "add":
-                    return addItemToLootTable(sender, args);
-                
-                case "remove":
-                    return removeItemFromLootTable(sender, args);
-                
-                case "tool":
-                	return giveItemMarker(sender, args);
-                
-                case "reload":
-                    return reload(sender);
-            }
-        }
+    	SyncExecutor.runAsync(() -> {
+    		try {
+    			if (args.length > 0) {
+    	            switch (args[0].toLowerCase()) {
+    	                
+    	                case "create":
+    	                    createLootTable(sender, args);
+    	                
+    	                case "delete":
+    	                    deleteLootTable(sender, args);
+    	                
+    	                case "add":
+    	                    addItemToLootTable(sender, args);
+    	                
+    	                case "remove":
+    	                    removeItemFromLootTable(sender, args);
+    	                
+    	                case "tool":
+    	                	giveItemMarker(sender, args);
+    	                
+    	                case "reload":
+    	                    reload(sender);
+    	            }
+    	        }
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}
+    	});
         return false;
     }
     
