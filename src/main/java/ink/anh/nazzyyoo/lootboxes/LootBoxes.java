@@ -2,6 +2,7 @@ package ink.anh.nazzyyoo.lootboxes;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import ink.anh.nazzyyoo.lootboxes.commands.ConfigCreatingCommands;
+import ink.anh.nazzyyoo.lootboxes.commands.ConfigCreatingTabCompleter;
 import ink.anh.nazzyyoo.lootboxes.events.LootBoxOpenEvent;
 import ink.anh.nazzyyoo.lootboxes.events.LootBoxesMarking;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootBoxManager;
@@ -28,6 +29,8 @@ public class LootBoxes extends JavaPlugin {
         LootTableManager.getInstance();
         
         this.getCommand("lootboxes").setExecutor(new ConfigCreatingCommands(this));
+        this.getCommand("lootboxes").setTabCompleter(new ConfigCreatingTabCompleter());
+        
         getServer().getPluginManager().registerEvents(new LootBoxOpenEvent(this), this);
         getServer().getPluginManager().registerEvents(new LootBoxesMarking(this), this);
     }
