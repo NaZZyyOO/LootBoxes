@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
+import ink.anh.api.utils.SyncExecutor;
 import ink.anh.nazzyyoo.lootboxes.GlobalManager;
 import ink.anh.nazzyyoo.lootboxes.LootBoxes;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootBox;
@@ -32,14 +33,18 @@ public class LootBoxCooldown {
             int lootTime = lootedTime + cooldownSeconds;
             
             if (currentTimeSecs >= lootTime) {
-            	lootBox.getLootedPlayers().remove(playerUUID);
-                lootBoxManager.updateLootBox(lootBox);
+            	SyncExecutor.runAsync(() -> {
+            		lootBox.getLootedPlayers().remove(playerUUID);
+                    lootBoxManager.updateLootBox(lootBox);
+            	});
                 return true;
             }
             return false;
         } else {
-        	lootBox.getLootedPlayers().remove(playerUUID);
-            lootBoxManager.updateLootBox(lootBox);
+        	SyncExecutor.runAsync(() -> {
+        		lootBox.getLootedPlayers().remove(playerUUID);
+                lootBoxManager.updateLootBox(lootBox);
+        	});
             return true;
         }
     }
