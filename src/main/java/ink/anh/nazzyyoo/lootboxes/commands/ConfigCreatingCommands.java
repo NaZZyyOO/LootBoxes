@@ -10,6 +10,9 @@ import ink.anh.nazzyyoo.lootboxes.lootbox.LootItem;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootTable;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootTableManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
@@ -229,18 +232,13 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
             if (itemStack != null) {
             	String serializedItem = ItemStackSerializer.serializeItemStack(itemStack);
             	
-            	LootItem[] lootItems = lootTable.getLootItems();
-            	LootItem[] newLootItems = new LootItem[lootItems.length - 1];
-
-            	int index = 0;
-            	for (LootItem lootItem : lootTable.getLootItems()) {
-                    if (ItemStackSerializer.serializeItemStack(lootItem.getItem()).equals(serializedItem)) {
-                        continue;
+            	List<LootItem> newLootItems = new ArrayList<>();
+                for (LootItem lootItem : lootTable.getLootItems()) {
+                    if (!ItemStackSerializer.serializeItemStack(lootItem.getItem()).equals(serializedItem)) {
+                        newLootItems.add(lootItem);
                     }
-                    newLootItems[index++] = lootItem;
                 }
-
-                lootTable.setLootItems(newLootItems);
+                lootTable.setLootItems(newLootItems.toArray(new LootItem[0]));
                 LootTableManager.getInstance().saveLootTable(lootTable);
                 
                 String item_name = itemStack.getItemMeta().getDisplayName();
