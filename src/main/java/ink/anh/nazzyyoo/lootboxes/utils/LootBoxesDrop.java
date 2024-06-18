@@ -3,6 +3,7 @@ package ink.anh.nazzyyoo.lootboxes.utils;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
+import ink.anh.api.utils.SyncExecutor;
 import ink.anh.nazzyyoo.lootboxes.LootBoxes;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootBox;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootItem;
@@ -30,24 +31,28 @@ public class LootBoxesDrop {
             return;
         }
     	
-    	for (LootItem lootItem : lootTable.getLootItems()) {
-    		double chance = lootItem.getChance();
-            int minQuantity = lootItem.getMinQuantity();
-            int maxQuantity = lootItem.getMaxQuantity();
-            
-            Random random = new Random();
-            double randomNumber = random.nextDouble() * 100;
-            
-            if (randomNumber <= chance) {
-            	ItemStack itemStack = lootItem.getItem();
-            	if (itemStack != null) {
-                    
-            		int quantity = random.nextInt(maxQuantity - minQuantity + 1) + minQuantity;
-                    itemStack.setAmount(quantity);
-                    loc.getWorld().dropItem(loc, itemStack);
+    	SyncExecutor.runAsync(() -> {
+    		for (LootItem lootItem : lootTable.getLootItems()) {
+        		double chance = lootItem.getChance();
+                int minQuantity = lootItem.getMinQuantity();
+                int maxQuantity = lootItem.getMaxQuantity();
+                
+                Random random = new Random();
+                double randomNumber = random.nextDouble() * 100;
+                
+                if (randomNumber <= chance) {
+                	ItemStack itemStack = lootItem.getItem();
+                	if (itemStack != null) {
+                        
+                		int quantity = random.nextInt(maxQuantity - minQuantity + 1) + minQuantity;
+                		SyncExecutor.runSync(() -> {
+                			itemStack.setAmount(quantity);
+                            loc.getWorld().dropItem(loc, itemStack);
+                		});
+                    }
                 }
-            }
-            
-    	}
+                
+        	}
+    	});
     }
 }
