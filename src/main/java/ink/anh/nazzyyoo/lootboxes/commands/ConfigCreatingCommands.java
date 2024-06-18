@@ -47,21 +47,27 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
     	                
     	                case "create":
     	                    createLootTable(sender, args);
+    	                    break;
     	                
     	                case "delete":
     	                    deleteLootTable(sender, args);
+    	                    break;
     	                
     	                case "add":
     	                    addItemToLootTable(sender, args);
+    	                    break;
     	                
     	                case "remove":
     	                    removeItemFromLootTable(sender, args);
+    	                    break;
     	                
     	                case "tool":
     	                	giveItemMarker(sender, args);
+    	                	break;
     	                
     	                case "reload":
     	                    reload(sender);
+    	                    break;
     	            }
     	        }
     		} catch (Exception e) {
