@@ -67,7 +67,7 @@ public class LootBoxOpenEvent extends Sender implements Listener {
            
             event.setCancelled(true);
             
-            if (LootBoxCooldown.isCooldownExpired(player, lootBox) == true) {
+            if (LootBoxCooldown.CanBeLooted(player, lootBox) == true) {
         		
         		lootBox.addLootedPlayer(player.getUniqueId());
             	

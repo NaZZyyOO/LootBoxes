@@ -52,7 +52,7 @@ public class LootTableManager {
         loadLootTables();
     }
 
-    private void loadLootTables() {
+    public void loadLootTables() {
         File file = new File(LootBoxes.getInstance().getDataFolder(), "loottables.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
@@ -119,7 +119,7 @@ public class LootTableManager {
         }
     }
 
-    private void saveLootTable(LootTable lootTable) {
+    public void saveLootTable(LootTable lootTable) {
         File file = new File(LootBoxes.getInstance().getDataFolder(), "loottables.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 

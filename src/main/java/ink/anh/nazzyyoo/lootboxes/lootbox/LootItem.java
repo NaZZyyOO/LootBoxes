@@ -5,11 +5,11 @@ import org.bukkit.inventory.ItemStack;
 public class LootItem {
     
 	private ItemStack item;
-    private int chance;
+    private double chance;
     private int minQuantity;
     private int maxQuantity;
 
-    public LootItem(ItemStack item, int chance, int minQuantity, int maxQuantity) {
+    public LootItem(ItemStack item, double chance, int minQuantity, int maxQuantity) {
         this.item = item;
         this.chance = chance;
         this.minQuantity = minQuantity;
@@ -24,11 +24,11 @@ public class LootItem {
         this.item = item;
     }
 
-    public int getChance() {
+    public double getChance() {
         return chance;
     }
 
-    public void setChance(int chance) {
+    public void setChance(double chance) {
         this.chance = chance;
     }
 
