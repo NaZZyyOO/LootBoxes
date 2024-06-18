@@ -13,7 +13,7 @@ import ink.anh.nazzyyoo.lootboxes.lootbox.LootBoxManager;
 
 public class LootBoxCooldown {
 
-    public static boolean isCooldownExpired(Player player, LootBox lootBox) {
+    public static boolean CanBeLooted(Player player, LootBox lootBox) {
         LootBoxManager lootBoxManager = LootBoxManager.getInstance(GlobalManager.getManager(LootBoxes.getInstance()));
         
         UUID playerUUID = player.getUniqueId();
@@ -41,10 +41,6 @@ public class LootBoxCooldown {
             }
             return false;
         } else {
-        	SyncExecutor.runAsync(() -> {
-        		lootBox.getLootedPlayers().remove(playerUUID);
-                lootBoxManager.updateLootBox(lootBox);
-        	});
             return true;
         }
     }
