@@ -1,8 +1,5 @@
 package ink.anh.nazzyyoo.lootboxes.commands;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import ink.anh.api.items.ItemStackSerializer;
 import ink.anh.api.messages.MessageForFormatting;
 import ink.anh.api.messages.MessageType;
@@ -12,12 +9,6 @@ import ink.anh.nazzyyoo.lootboxes.LootBoxes;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootItem;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootTable;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootTableManager;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.io.File;
-import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
