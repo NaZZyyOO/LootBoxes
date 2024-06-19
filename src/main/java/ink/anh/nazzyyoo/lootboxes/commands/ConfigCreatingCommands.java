@@ -1,6 +1,5 @@
 package ink.anh.nazzyyoo.lootboxes.commands;
 
-import ink.anh.api.items.ItemStackSerializer;
 import ink.anh.api.messages.MessageForFormatting;
 import ink.anh.api.messages.MessageType;
 import ink.anh.api.messages.Sender;
@@ -168,7 +167,15 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
             lootTable.getLootItems().add(lootItem);
 
             LootTableManager.getInstance().saveLootTable(lootTable);
-            sendMessage(new MessageForFormatting("lootboxes_loottable_item_added " + tableName, new String[]{}), MessageType.NORMAL, sender);
+            
+            String item_name = itemStack.getItemMeta().getDisplayName();
+            if (item_name == null) {
+                item_name = itemStack.getType().getKey().toString();
+                if (item_name == null) {
+                    item_name = itemSaveMethod;
+                }
+            }
+            sendMessage(new MessageForFormatting("lootboxes_loottable_item_added", new String[]{tableName, item_name}), MessageType.NORMAL, sender);
             return true;
         }
         return false;
