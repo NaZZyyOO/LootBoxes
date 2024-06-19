@@ -148,7 +148,7 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
                 minQuantity = Integer.parseInt(args[3]);
                 maxQuantity = Integer.parseInt(args[4]);
             } catch (NumberFormatException e) {
-                sendMessage(new MessageForFormatting("lootboxes_loottable_invalid_number_format", new String[]{}), MessageType.ERROR, sender);
+                System.err.print("Numbers invalid format.");
                 return false;
             }
 
@@ -176,7 +176,7 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
             lootTable.getLootItems().remove(lootItem);
 
             LootTableManager.getInstance().saveLootTable(lootTable);
-            sendMessage(new MessageForFormatting("lootboxes_loottable_item_removed " + tableName, new String[]{}), MessageType.NORMAL, sender);
+            sendMessage(new MessageForFormatting("lootboxes_loottable_item_deleted " + tableName, new String[]{}), MessageType.NORMAL, sender);
             return true;
         }
         return false;
