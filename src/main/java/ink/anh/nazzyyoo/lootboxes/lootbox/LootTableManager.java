@@ -109,10 +109,8 @@ public class LootTableManager {
     }
 
     private void saveLootItems(ConfigurationSection tableSection, Set<LootItem> lootItems) {
-        int i = 0;
         for (LootItem lootItem : lootItems) {
-            ConfigurationSection itemSection = tableSection.createSection("items.item" + i++);
-            itemSection.set("item", ItemStackSerializer.serializeItemStack(lootItem.getItem()));
+            ConfigurationSection itemSection = tableSection.createSection(ItemStackSerializer.serializeItemStack(lootItem.getItem()));
             itemSection.set("chance", lootItem.getChance());
             itemSection.set("min_quantity", lootItem.getMinQuantity());
             itemSection.set("max_quantity", lootItem.getMaxQuantity());
