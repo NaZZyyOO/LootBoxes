@@ -1,10 +1,12 @@
 package ink.anh.nazzyyoo.lootboxes.lootbox;
 
+import java.util.Objects;
+
 import org.bukkit.inventory.ItemStack;
 
 public class LootItem {
     
-	private ItemStack item;
+    private ItemStack item;
     private double chance;
     private int minQuantity;
     private int maxQuantity;
@@ -46,5 +48,22 @@ public class LootItem {
 
     public void setMaxQuantity(int maxQuantity) {
         this.maxQuantity = maxQuantity;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(item);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LootItem other = (LootItem) obj;
+        return Objects.equals(item, other.item);
     }
 }

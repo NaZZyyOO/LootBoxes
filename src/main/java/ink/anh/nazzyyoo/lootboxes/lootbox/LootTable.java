@@ -1,11 +1,14 @@
 package ink.anh.nazzyyoo.lootboxes.lootbox;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class LootTable {
     
-	private String lootTableName;
-    private LootItem[] lootItems;
+    private String lootTableName;
+    private Set<LootItem> lootItems = new HashSet<>();
 
-    public LootTable(String lootTableName, LootItem[] lootItems) {
+    public LootTable(String lootTableName, Set<LootItem> lootItems) {
         this.lootTableName = lootTableName;
         this.lootItems = lootItems;
     }
@@ -18,11 +21,11 @@ public class LootTable {
         this.lootTableName = lootTableName;
     }
 
-    public LootItem[] getLootItems() {
+    public Set<LootItem> getLootItems() {
         return lootItems;
     }
 
-    public void setLootItems(LootItem[] lootItems) {
+    public void setLootItems(Set<LootItem> lootItems) {
         this.lootItems = lootItems;
     }
 }

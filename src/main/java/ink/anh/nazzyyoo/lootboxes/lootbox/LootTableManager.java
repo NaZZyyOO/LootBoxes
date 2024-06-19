@@ -8,7 +8,9 @@ import ink.anh.api.items.ItemStackSerializer;
 import ink.anh.nazzyyoo.lootboxes.LootBoxes;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LootTableManager {
@@ -62,28 +64,26 @@ public class LootTableManager {
                 ConfigurationSection tableSection = lootTablesSection.getConfigurationSection(key);
 
                 // Читання предметів таблиці луту
-                LootItem[] lootItems = loadLootItems(tableSection);
+                Set<LootItem> lootItems = loadLootItems(tableSection);
                 LootTable lootTable = new LootTable(key, lootItems);
                 lootTableCache.put(key, lootTable);
             }
         }
     }
 
-    private LootItem[] loadLootItems(ConfigurationSection tableSection) {
-    	if (tableSection == null) return new LootItem[0];
-        
-    	LootItem[] lootItems = new LootItem[tableSection.getKeys(false).size()];
-        int index = 0;
+    private Set<LootItem> loadLootItems(ConfigurationSection tableSection) {
+        Set<LootItem> lootItems = new HashSet<>();
+        if (tableSection == null) return lootItems;
 
         for (String itemKey : tableSection.getKeys(false)) {
             ConfigurationSection itemSection = tableSection.getConfigurationSection(itemKey);
-            
+
             ItemStack item = ItemStackSerializer.deserializeItemStack(itemKey);
-            int chance = itemSection.getInt("chance");
+            double chance = itemSection.getDouble("chance");
             int minQuantity = itemSection.getInt("min_quantity");
             int maxQuantity = itemSection.getInt("max_quantity");
 
-            lootItems[index++] = new LootItem(item, chance, minQuantity, maxQuantity);
+            lootItems.add(new LootItem(item, chance, minQuantity, maxQuantity));
         }
 
         return lootItems;
@@ -108,10 +108,10 @@ public class LootTableManager {
         }
     }
 
-    private void saveLootItems(ConfigurationSection tableSection, LootItem[] lootItems) {
-        for (int i = 0; i < lootItems.length; i++) {
-            LootItem lootItem = lootItems[i];
-            ConfigurationSection itemSection = tableSection.createSection("items.item" + i);
+    private void saveLootItems(ConfigurationSection tableSection, Set<LootItem> lootItems) {
+        int i = 0;
+        for (LootItem lootItem : lootItems) {
+            ConfigurationSection itemSection = tableSection.createSection("items.item" + i++);
             itemSection.set("item", ItemStackSerializer.serializeItemStack(lootItem.getItem()));
             itemSection.set("chance", lootItem.getChance());
             itemSection.set("min_quantity", lootItem.getMinQuantity());

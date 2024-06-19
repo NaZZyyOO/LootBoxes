@@ -10,9 +10,8 @@ import ink.anh.nazzyyoo.lootboxes.lootbox.LootItem;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootTable;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootTableManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.HashSet;
+import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
@@ -26,53 +25,52 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class ConfigCreatingCommands extends Sender implements CommandExecutor {
 
-	private final LootBoxes LootBoxes;
+    private final LootBoxes LootBoxes;
 
     public ConfigCreatingCommands(LootBoxes LootBoxes) {
-    	super(LootBoxes.getGlobalManager());
-    	this.LootBoxes = LootBoxes;
-    	LootTableManager.getInstance().loadLootTables();
+        super(LootBoxes.getGlobalManager());
+        this.LootBoxes = LootBoxes;
+        LootTableManager.getInstance().loadLootTables();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-    	SyncExecutor.runAsync(() -> {
-    		try {
-    			if (args.length > 0) {
-    	            switch (args[0].toLowerCase()) {
-    	                
-    	                case "create":
-    	                    createLootTable(sender, args);
-    	                    break;
-    	                
-    	                case "delete":
-    	                    deleteLootTable(sender, args);
-    	                    break;
-    	                
-    	                case "add":
-    	                    addItemToLootTable(sender, args);
-    	                    break;
-    	                
-    	                case "remove":
-    	                    removeItemFromLootTable(sender, args);
-    	                    break;
-    	                
-    	                case "tool":
-    	                	giveItemMarker(sender, args);
-    	                	break;
-    	                
-    	                case "reload":
-    	                    reload(sender);
-    	                    break;
-    	            }
-    	        }
-    		} catch (Exception e) {
-    			e.printStackTrace();
-    		}
-    	});
+        SyncExecutor.runAsync(() -> {
+            try {
+                if (args.length > 0) {
+                    switch (args[0].toLowerCase()) {
+                        case "create":
+                            createLootTable(sender, args);
+                            break;
+
+                        case "delete":
+                            deleteLootTable(sender, args);
+                            break;
+
+                        case "add":
+                            addItemToLootTable(sender, args);
+                            break;
+
+                        case "remove":
+                            removeItemFromLootTable(sender, args);
+                            break;
+
+                        case "tool":
+                            giveItemMarker(sender, args);
+                            break;
+
+                        case "reload":
+                            reload(sender);
+                            break;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
         return false;
     }
-    
+
     private int checkPlayerPermissions(CommandSender sender, String permission) {
         // Перевірка, чи команду виконує консоль
         if (sender instanceof ConsoleCommandSender) {
@@ -80,7 +78,6 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
         }
 
         if (sender instanceof Player) {
-
             // Перевіряємо наявність дозволу у гравця
             if (sender.hasPermission(permission)) {
                 return 1;
@@ -89,171 +86,98 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
 
         return 2;
     }
-    
+
     private boolean reload(CommandSender sender) {
-    	int perm = checkPlayerPermissions(sender, Permissions.RELOAD);
-	    if (perm != 0 && perm != 1) {
+        int perm = checkPlayerPermissions(sender, Permissions.RELOAD);
+        if (perm != 0 && perm != 1) {
             return false;
-	    }
+        }
         LootTableManager.getInstance().reloadLootTables();
-        sendMessage(new MessageForFormatting("lootboxes_loottable_reload", new String[] {}), MessageType.NORMAL, sender);
+        sendMessage(new MessageForFormatting("lootboxes_loottable_reload", new String[]{}), MessageType.NORMAL, sender);
         return true;
     }
-    
 
     private boolean createLootTable(CommandSender sender, String[] args) {
-    	int perm = checkPlayerPermissions(sender, Permissions.LT_EDITING);
-	    if (perm != 0 && perm != 1) return false;
-    	
-	    if (args.length == 2) {
+        int perm = checkPlayerPermissions(sender, Permissions.LT_EDITING);
+        if (perm != 0 && perm != 1) return false;
+
+        if (args.length == 2) {
             String name = args[1];
-            LootItem[] lootItems = new LootItem[0];
+            Set<LootItem> lootItems = new HashSet<>();
             LootTable lootTable = new LootTable(name, lootItems);
-            
+
             LootTableManager.getInstance().addLootTable(lootTable);
-            LootTableManager.getInstance().saveLootTable(lootTable);   
-            
-            sendMessage(new MessageForFormatting("lootboxes_loottable_created " + name, new String[] {}), MessageType.NORMAL, sender);
+            LootTableManager.getInstance().saveLootTable(lootTable);
+
+            sendMessage(new MessageForFormatting("lootboxes_loottable_created " + name, new String[]{}), MessageType.NORMAL, sender);
             return true;
         }
         return false;
     }
 
     private boolean deleteLootTable(CommandSender sender, String[] args) {
-    	int perm = checkPlayerPermissions(sender, Permissions.LT_EDITING);
-	    if (perm != 0 && perm != 1) return false;
-    	
-	    if (args.length == 2) {
+        int perm = checkPlayerPermissions(sender, Permissions.LT_EDITING);
+        if (perm != 0 && perm != 1) return false;
+
+        if (args.length == 2) {
             String name = args[1];
             LootTableManager.getInstance().removeLootTable(name);
-            LootTableManager.getInstance().saveLootTables();
-            
-            sendMessage(new MessageForFormatting("lootboxes_loottable_deleted " + name, new String[] {}), MessageType.NORMAL, sender);
+
+            sendMessage(new MessageForFormatting("lootboxes_loottable_deleted " + name, new String[]{}), MessageType.NORMAL, sender);
             return true;
         }
         return false;
     }
 
     private boolean addItemToLootTable(CommandSender sender, String[] args) {
-
         int perm = checkPlayerPermissions(sender, Permissions.LT_EDITING);
-        if (perm != 1) {
-            return false;
-        }
+        if (perm != 0 && perm != 1) return false;
 
-        if (args.length != 6) {
-            return false;
-        }
+        if (args.length >= 4) {
+            String tableName = args[1];
+            LootTable lootTable = LootTableManager.getInstance().getLootTable(tableName);
+            if (lootTable == null) return false;
 
-        String tableName = args[1];
-        LootTable lootTableData = LootTableManager.getInstance().getLootTable(tableName);
-
-        if (lootTableData != null) {
-            String itemSaveMethod = args[2];
-
-            ItemStack itemStack = null;
-
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                if (itemSaveMethod.equals("hand")) {
-                    itemStack = player.getInventory().getItemInMainHand();
-                } else if (itemSaveMethod.equals("offhand")) {
-                    itemStack = player.getInventory().getItemInOffHand();
-                }
+            Player player = (Player) sender;
+            ItemStack item = player.getInventory().getItemInMainHand();
+            double chance;
+            int minQuantity;
+            int maxQuantity;
+            try {
+                chance = Double.parseDouble(args[2]);
+                minQuantity = Integer.parseInt(args[3]);
+                maxQuantity = Integer.parseInt(args[4]);
+            } catch (NumberFormatException e) {
+                sendMessage(new MessageForFormatting("lootboxes_loottable_invalid_number_format", new String[]{}), MessageType.ERROR, sender);
+                return false;
             }
 
-            if (itemStack != null) {
+            LootItem lootItem = new LootItem(item, chance, minQuantity, maxQuantity);
+            lootTable.getLootItems().add(lootItem);
 
-                Double chance = Double.parseDouble(args[3]);
-
-                int min_quantity = Integer.parseInt(args[4]);
-
-                int max_quantity = Integer.parseInt(args[5]);
-
-                LootItem[] lootItems = lootTableData.getLootItems();
-
-                LootItem[] newLootItems = new LootItem[lootItems.length + 1];
-
-                System.arraycopy(lootItems, 0, newLootItems, 0, lootItems.length);
-
-                newLootItems[lootItems.length] = new LootItem(itemStack, chance, min_quantity, max_quantity);
-
-                lootTableData.setLootItems(newLootItems);
-
-                LootTableManager.getInstance().saveLootTable(lootTableData);
-
-                String item_name = itemStack.getItemMeta().getDisplayName();
-                if (item_name == null) {
-                    item_name = itemStack.getType().getKey().toString();
-                    if (item_name == null) {
-                        item_name = itemSaveMethod;
-                    }
-                }
-                sendMessage(new MessageForFormatting("lootboxes_loottable_item_added", new String[]{tableName, item_name}), MessageType.NORMAL, sender);
-                return true;
-            }
-        } else {
-            sendMessage(new MessageForFormatting("lootboxes_loottable_doesnt_exist", new String[]{tableName}), MessageType.NORMAL, sender);
-            return false;
+            LootTableManager.getInstance().saveLootTable(lootTable);
+            sendMessage(new MessageForFormatting("lootboxes_loottable_item_added " + tableName, new String[]{}), MessageType.NORMAL, sender);
+            return true;
         }
         return false;
     }
-    
-    private boolean removeItemFromLootTable(CommandSender sender, String[] args) {
-        
-    	int perm = checkPlayerPermissions(sender, Permissions.LT_EDITING);
-	    if (perm != 0 && perm != 1) {
-            return false;
-	    }
-    	
-    	if (args.length != 3) {
-    		return false;
-    	}
-        
-    	
-    	String tableName = args[1];
-    	LootTable lootTable = LootTableManager.getInstance().getLootTable(tableName);
-        
-        
-        if (lootTable != null) {
-            ItemStack itemStack = null;
-            String itemSaveMethod = args[2];
-            
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                
-                if (itemSaveMethod.equals("hand")) {
-                    itemStack = player.getInventory().getItemInMainHand();
-                } else if (itemSaveMethod.equals("offhand")) {
-                    itemStack = player.getInventory().getItemInOffHand();
-                }
-            }
 
-            if (itemStack != null) {
-            	String serializedItem = ItemStackSerializer.serializeItemStack(itemStack);
-            	
-            	List<LootItem> newLootItems = new ArrayList<>();
-                for (LootItem lootItem : lootTable.getLootItems()) {
-                    if (!ItemStackSerializer.serializeItemStack(lootItem.getItem()).equals(serializedItem)) {
-                        newLootItems.add(lootItem);
-                    }
-                }
-                lootTable.setLootItems(newLootItems.toArray(new LootItem[0]));
-                LootTableManager.getInstance().saveLootTable(lootTable);
-                
-                String item_name = itemStack.getItemMeta().getDisplayName();
-                if (item_name == null ) {
-                	item_name = itemStack.getType().getKey().getKey();
-                	if (item_name == null) {
-                		item_name = itemSaveMethod;
-                	}
-                }
-                sendMessage(new MessageForFormatting("lootboxes_loottable_item_deleted", new String[] {tableName, item_name }), MessageType.NORMAL, sender);
-                return true;
-            }
-        } else {
-        	sendMessage(new MessageForFormatting("lootboxes_loottable_doesnt_exist", new String[]  {tableName}), MessageType.NORMAL, sender);
-        	return false;
+    private boolean removeItemFromLootTable(CommandSender sender, String[] args) {
+        int perm = checkPlayerPermissions(sender, Permissions.LT_EDITING);
+        if (perm != 0 && perm != 1) return false;
+
+        if (args.length == 3) {
+            String tableName = args[1];
+            LootTable lootTable = LootTableManager.getInstance().getLootTable(tableName);
+            if (lootTable == null) return false;
+
+            ItemStack item = ItemStackSerializer.deserializeItemStack(args[2]);
+            LootItem lootItem = new LootItem(item, 0, 0, 0);
+            lootTable.getLootItems().remove(lootItem);
+
+            LootTableManager.getInstance().saveLootTable(lootTable);
+            sendMessage(new MessageForFormatting("lootboxes_loottable_item_removed " + tableName, new String[]{}), MessageType.NORMAL, sender);
+            return true;
         }
         return false;
     }
