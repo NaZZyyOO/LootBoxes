@@ -58,6 +58,10 @@ public class LootBoxesMarking extends Sender implements Listener {
                 		handleLeftClick(player, loc, lootBox);
                 	}
                 }
+            } else {
+            	if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+            		event.setCancelled(true);
+            	}
             }
         }
     }

@@ -10,7 +10,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import ink.anh.api.lingo.Translator;
@@ -55,15 +54,12 @@ public class LootBoxOpenEvent extends Sender implements Listener {
     		
     		// Якщо в руках спец предмет, то зупинити цей код
     		ItemStack item = player.getInventory().getItemInMainHand();
-            ItemMeta itemMeta = item.getItemMeta();
             
-            if (itemMeta != null) {
-                String loottable = itemMeta.getPersistentDataContainer().get(new NamespacedKey(lootBoxes, "lootTable"), PersistentDataType.STRING);
-                if (loottable == null) return;
-                
-                String cooldownSeconds = itemMeta.getPersistentDataContainer().get(new NamespacedKey(lootBoxes, "cooldownSeconds"), PersistentDataType.STRING);
-                if (cooldownSeconds != null) return;
-            }
+            String loottable = item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(lootBoxes, "lootTable"), PersistentDataType.STRING);
+            if (loottable != null) return;
+            
+            String cooldownSeconds = item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(lootBoxes, "cooldownSeconds"), PersistentDataType.STRING);
+            if (cooldownSeconds != null) return;
            
             event.setCancelled(true);
             
@@ -71,7 +67,7 @@ public class LootBoxOpenEvent extends Sender implements Listener {
         		
         		lootBox.addLootedPlayer(player.getUniqueId());
             	
-                LootBoxesDrop.dropLootBoxContents(lootBox, loc);
+                LootBoxesDrop.dropLootBoxContents(lootBox, loc.add(0, 1, 0));
                 
                 Sound sound = Sound.BLOCK_CHEST_OPEN;
                 float volume = 1;
