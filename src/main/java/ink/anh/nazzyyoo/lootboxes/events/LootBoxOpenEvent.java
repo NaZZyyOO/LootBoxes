@@ -10,7 +10,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 
 import ink.anh.api.lingo.Translator;
 import ink.anh.api.messages.MessageComponents;
@@ -53,39 +52,42 @@ public class LootBoxOpenEvent extends Sender implements Listener {
         if (lootBox != null) {
     		
     		// Якщо в руках спец предмет, то зупинити цей код
-    		ItemStack item = player.getInventory().getItemInMainHand();
-            
-            String loottable = item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(lootBoxes, "lootTable"), PersistentDataType.STRING);
-            if (loottable != null) return;
-            
-            String cooldownSeconds = item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(lootBoxes, "cooldownSeconds"), PersistentDataType.STRING);
-            if (cooldownSeconds != null) return;
-           
-            event.setCancelled(true);
-            
-            if (LootBoxCooldown.CanBeLooted(player, lootBox) == true) {
-        		
-        		lootBox.addLootedPlayer(player.getUniqueId());
+    		boolean loottable = false;
+        	boolean cooldownSeconds = false;
+        	ItemStack item = player.getInventory().getItemInMainHand();
+            if (item.getItemMeta() != null) {
             	
-                LootBoxesDrop.dropLootBoxContents(lootBox, loc.add(0, 1, 0));
+            	loottable = item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(lootBoxes, "lootTable"));
+                cooldownSeconds = item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(lootBoxes, "cooldownSeconds"));
+            }
+            if (loottable == false || cooldownSeconds == false) {
+            	event.setCancelled(true);
                 
-                Sound sound = Sound.BLOCK_CHEST_OPEN;
-                float volume = 1;
-                float pitch = 0.2f;
-                loc.getWorld().playSound(loc, sound, volume, pitch);
-                
-                return;
-            
-            } else {
-                String message = Translator.translateKyeWorld(libraryManager, "lootboxes_player_cant_open_cd", LangUtils.getPlayerLanguage(player));
-                MessageComponents messageComponents = MessageComponents.builder()
-                        .content(message)
-                        .hexColor("#FFD700")
-                        .build();
+                if (LootBoxCooldown.CanBeLooted(player, lootBox) == true) {
+            		
+            		lootBox.addLootedPlayer(player.getUniqueId());
+                	
+            		loc = loc.add(0, 1, 0);
+            	    LootBoxesDrop.dropLootBoxContents(lootBox, loc);
                     
-                Messenger.sendActionBar(LootBoxes.getInstance(), player, messageComponents, message);
+                    Sound sound = Sound.BLOCK_CHEST_OPEN;
+                    float volume = 1;
+                    float pitch = 0.2f;
+                    loc.getWorld().playSound(loc, sound, volume, pitch);
+                    
+                    return;
                 
-                return;
+                } else {
+                    String message = Translator.translateKyeWorld(libraryManager, "lootboxes_player_cant_open_cd", LangUtils.getPlayerLanguage(player));
+                    MessageComponents messageComponents = MessageComponents.builder()
+                            .content(message)
+                            .hexColor("#FFD700")
+                            .build();
+                        
+                    Messenger.sendActionBar(LootBoxes.getInstance(), player, messageComponents, message);
+                    
+                    return;
+                }
             }
         } else {
         	return;

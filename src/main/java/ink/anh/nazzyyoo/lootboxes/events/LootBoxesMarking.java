@@ -87,8 +87,7 @@ public class LootBoxesMarking extends Sender implements Listener {
                     Particle.DustOptions dustOptions = new Particle.DustOptions(Color.GREEN, 1.4f);
                     player.spawnParticle(Particle.REDSTONE, loc, 60, 1f, 0f, 1f, dustOptions);
                     event.setCancelled(true);
-                    
-                    return;
+                   
                     
                 } catch (NumberFormatException e) {
                     sendMessage(new MessageForFormatting("lootboxes_invalid_cooldown", new String[]{}), MessageType.ERROR, player);
@@ -96,7 +95,6 @@ public class LootBoxesMarking extends Sender implements Listener {
                 }
             }
         }
-        return;
     }
 
 
@@ -108,6 +106,5 @@ public class LootBoxesMarking extends Sender implements Listener {
         Particle.DustOptions dustOptions = new Particle.DustOptions(Color.RED, 1.4f);
         player.spawnParticle(Particle.REDSTONE, loc, 60, 1f, 0f, 1f, dustOptions);
         
-        return;
     }
 }
