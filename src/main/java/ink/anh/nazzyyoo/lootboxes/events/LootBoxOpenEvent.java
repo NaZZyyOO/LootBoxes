@@ -67,8 +67,8 @@ public class LootBoxOpenEvent extends Sender implements Listener {
             		
             		lootBox.addLootedPlayer(player.getUniqueId());
                 	
-            		loc = loc.add(0, 1, 0);
-            	    LootBoxesDrop.dropLootBoxContents(lootBox, loc);
+            		Location newLoc = new Location(loc.getWorld(), loc.getX(), loc.getY() + 1, loc.getZ());
+            	    LootBoxesDrop.dropLootBoxContents(lootBox, newLoc);
                     
                     Sound sound = Sound.BLOCK_CHEST_OPEN;
                     float volume = 1;
