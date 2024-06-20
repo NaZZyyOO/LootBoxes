@@ -42,9 +42,9 @@ public class LootBoxesMarking extends Sender implements Listener {
 
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK) {
         	Location loc = event.getClickedBlock().getLocation();
+        	LootBox lootBox = boxManager.getLootBox(loc);
         	
         	if (player.isSneaking()) {
-            	LootBox lootBox = boxManager.getLootBox(loc);
             	
             	if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             		
@@ -59,8 +59,10 @@ public class LootBoxesMarking extends Sender implements Listener {
                 	}
                 }
             } else {
-            	if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-            		event.setCancelled(true);
+            	if (lootBox != null) {
+            		if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+                		event.setCancelled(true);
+                	}
             	}
             }
         }
