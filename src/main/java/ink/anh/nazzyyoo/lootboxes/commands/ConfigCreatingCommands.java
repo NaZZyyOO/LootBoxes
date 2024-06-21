@@ -4,6 +4,7 @@ import ink.anh.api.messages.MessageForFormatting;
 import ink.anh.api.messages.MessageType;
 import ink.anh.api.messages.Sender;
 import ink.anh.api.utils.SyncExecutor;
+import ink.anh.nazzyyoo.lootboxes.GlobalManager;
 import ink.anh.nazzyyoo.lootboxes.LootBoxes;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootItem;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootTable;
@@ -92,7 +93,10 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
             return false;
         }
         LootTableManager.getInstance().reloadLootTables();
-        sendMessage(new MessageForFormatting("lootboxes_loottable_reload", new String[]{}), MessageType.NORMAL, sender);
+        GlobalManager manager = GlobalManager.getManager(LootBoxes);
+        manager.reload();
+        
+        sendMessage(new MessageForFormatting("lootboxes_plugin_reload", new String[]{}), MessageType.NORMAL, sender);
         return true;
     }
 
@@ -253,25 +257,26 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
     	String lootTable = args[1];
         String cooldown = args[2];
         String type = args[3];
-        if (type != "true" || type != "false") {
+        if (type == "true" || type == "false") {
+        	ItemStack item = new ItemStack(Material.STICK);
+            ItemMeta meta = item.getItemMeta();
+
+            meta.getPersistentDataContainer().set(new NamespacedKey(LootBoxes, "lootTable"), PersistentDataType.STRING, lootTable);
+            meta.getPersistentDataContainer().set(new NamespacedKey(LootBoxes, "cooldownSeconds"), PersistentDataType.STRING, cooldown);
+            meta.getPersistentDataContainer().set(new NamespacedKey(LootBoxes, "type"), PersistentDataType.STRING, type);
+            item.setItemMeta(meta);
+
+            if (sender instanceof Player) {	
+                Player player = (Player) sender;
+                player.getInventory().addItem(item);
+                sendMessage(new MessageForFormatting("lootboxes_loottable_tool", new String[] {lootTable, cooldown }), MessageType.NORMAL, sender);
+                return true;
+            }
+        	sendMessage(new MessageForFormatting("lootboxes_box_unknown_type", new String[] {type}), MessageType.NORMAL, sender);
+        	return false;
+        } else {
         	sendMessage(new MessageForFormatting("lootboxes_box_unknown_type", new String[] {type}), MessageType.NORMAL, sender);
         	return false;
         }
-
-        ItemStack item = new ItemStack(Material.STICK);
-        ItemMeta meta = item.getItemMeta();
-
-        meta.getPersistentDataContainer().set(new NamespacedKey(LootBoxes, "lootTable"), PersistentDataType.STRING, lootTable);
-        meta.getPersistentDataContainer().set(new NamespacedKey(LootBoxes, "cooldownSeconds"), PersistentDataType.STRING, cooldown);
-        meta.getPersistentDataContainer().set(new NamespacedKey(LootBoxes, "type"), PersistentDataType.STRING, type);
-        item.setItemMeta(meta);
-
-        if (sender instanceof Player) {	
-            Player player = (Player) sender;
-            player.getInventory().addItem(item);
-            sendMessage(new MessageForFormatting("lootboxes_loottable_tool", new String[] {lootTable, cooldown }), MessageType.NORMAL, sender);
-            return true;
-        }
-        return false;
     }
 }
