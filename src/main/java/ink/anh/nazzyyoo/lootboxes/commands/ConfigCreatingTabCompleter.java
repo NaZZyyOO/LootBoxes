@@ -50,6 +50,11 @@ public class ConfigCreatingTabCompleter implements TabCompleter {
         		
         		return Arrays.asList("<double>");
         	}
+            // Додавання підказки на тип існуючі типи лутбокса
+        	if (subCommand.equals("tool")) {
+        		
+        		return Arrays.asList("<boolean>");
+        	}
         } else if (args.length == 5) {
         	String subCommand = args[0].toLowerCase();
         	// Додавання підказки, що цей аргумент може має бути тільки цілим числом
