@@ -21,4 +21,10 @@ public class LangMessage extends LanguageManager {
         }
         return instance;
     }
+    
+    public static void reloadInstance(GlobalManager manager) {
+        synchronized (LOCK) {
+            instance = new LangMessage(manager);
+        }
+    }
 }
