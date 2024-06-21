@@ -91,6 +91,8 @@ public class GlobalManager extends LibraryManager {
         pluginName = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("plugin_name", "LootBoxes"));
         debug = plugin.getConfig().getBoolean("debug", false);
         setLanguageManager();
+        
+        this.langManager = LangMessage.getInstance(instance);
     }
 
     // Saves the default configuration if it doesn't exist.
@@ -127,6 +129,7 @@ public class GlobalManager extends LibraryManager {
                 saveDefaultConfig();
                 plugin.reloadConfig();
                 loadFields(plugin);
+                LangMessage.reloadInstance(instance);
                 Logger.info(plugin, Translator.translateKyeWorld(instance, "configuration_reloaded", new String[]{defaultLang}));
             } catch (Exception e) {
                 e.printStackTrace();
