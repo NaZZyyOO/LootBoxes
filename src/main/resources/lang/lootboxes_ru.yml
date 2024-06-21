@@ -2,7 +2,8 @@ lootboxes_box_marked: "Вы успешно отметили лутбокс."
 lootboxes_box_dismarked: "Вы сняли метку с этого лутбокса."
 lootboxes_player_cant_open_cd: "Кажется, вы уже лутали этот лутбокс."
 
-lootboxes_loottable_reload: "Таблицы лута перезагружены."
+lootboxes_plugin_reload: "Плагин перезагружен."
+
 lootboxes_loottable_created: "Вы создали таблицу лута:"
 lootboxes_loottable_deleted: "Вы удалили таблицу лута:"
 lootboxes_loottable_doesnt_exist: "Таблица лута %s не существует."

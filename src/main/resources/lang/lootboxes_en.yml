@@ -2,7 +2,8 @@ lootboxes_box_marked: "You have successfully marked the loot box."
 lootboxes_box_dismarked: "You have removed the marking from this loot box."
 lootboxes_player_cant_open_cd: "It seems you have already looted this loot box."
 
-lootboxes_loottable_reload: "Loot tables have been reloaded."
+lootboxes_plugin_reload: "Plugin have been reloaded."
+
 lootboxes_loottable_created: "You have created the loot table:"
 lootboxes_loottable_deleted: "You have deleted the loot table:"
 lootboxes_loottable_doesnt_exist: "The loot table %s does not exist."
