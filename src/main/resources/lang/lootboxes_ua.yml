@@ -2,6 +2,7 @@ lootboxes_box_marked: "Ви успішно відмаркерували лутб
 lootboxes_box_dismarked: "Ви зняли маркування з цього лутбоксу."
 lootboxes_player_cant_open_cd: "Здається, Ви вже лутали цей лутбокс."
 
+lootboxes_loottable_reload: "Таблиці луту перезагружені."
 lootboxes_loottable_created: "Ви створили таблицю луту:"
 lootboxes_loottable_deleted: "Ви видалили таблицю луту:"
 lootboxes_loottable_doesnt_exist: "Таблиця луту %s не існує."
@@ -9,4 +10,4 @@ lootboxes_loottable_item_added: "Ви додали до таблиці %s пре
 lootboxes_loottable_item_deleted: "Ви видалили з таблиці %s предмет %s."
 lootboxes_loottable_doesnt_contain_item: "Таблиця луту %s не містить в собі цей предмет."
 lootboxes_loottable_tool: "Ви отримали предмет для маркування лутбоксів таблицею %s з часом відновлення %s."
-lootboxes_loottable_reload: "Таблиці луту перезагружені."
+lootboxes_box_unknown_type: "Лутбокс не може бути такого типу: %s."
