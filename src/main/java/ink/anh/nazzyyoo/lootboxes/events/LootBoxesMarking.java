@@ -77,12 +77,15 @@ public class LootBoxesMarking extends Sender implements Listener {
         if (itemMeta != null) {
             String loottable = itemMeta.getPersistentDataContainer().get(new NamespacedKey(lootBoxes, "lootTable"), PersistentDataType.STRING);
             String cooldownSeconds = itemMeta.getPersistentDataContainer().get(new NamespacedKey(lootBoxes, "cooldownSeconds"), PersistentDataType.STRING);
-
-            if (loottable != null && cooldownSeconds != null) {
+            String type = itemMeta.getPersistentDataContainer().get(new NamespacedKey(lootBoxes, "type"), PersistentDataType.STRING);
+            
+            if (loottable != null && cooldownSeconds != null && type != null) {
                 try {
                     int cooldown = Integer.parseInt(cooldownSeconds);
+                    boolean typeLootbox = Boolean.parseBoolean(type);
+                    
                     Map<UUID, Integer> lootedPlayers = new HashMap<>();
-                    LootBox newLootBox = new LootBox(loc, loottable, cooldown, lootedPlayers);
+                    LootBox newLootBox = new LootBox(loc, loottable, typeLootbox, cooldown, lootedPlayers);
                     boxManager.addLootBox(newLootBox);
                     sendMessage(new MessageForFormatting("lootboxes_box_marked", new String[]{}), MessageType.NORMAL, player);
                     

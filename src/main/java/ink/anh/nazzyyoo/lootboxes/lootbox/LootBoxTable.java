@@ -32,6 +32,7 @@ public class LootBoxTable extends AbstractTable<LootBox> {
                 "hash_code INTEGER PRIMARY KEY," +
                 "location TEXT," +
                 "lootTableName VARCHAR(255)," +
+                "type TEXT," +
                 "lootedPlayers TEXT," +
                 "cooldown INTEGER" +
                 ");";
@@ -44,14 +45,15 @@ public class LootBoxTable extends AbstractTable<LootBox> {
 
     @Override
     public void insert(LootBox lootBox) {
-        String insertSQL = "INSERT INTO " + dbName + " (hash_code, location, lootTableName, lootedPlayers, cooldown) VALUES (?, ?, ?, ?, ?);";
+        String insertSQL = "INSERT INTO " + dbName + " (hash_code, location, lootTableName, type, lootedPlayers, cooldown) VALUES (?, ?, ?, ?, ?, ?);";
         executeTransaction(conn -> {
             try (PreparedStatement ps = conn.prepareStatement(insertSQL)) {
                 ps.setInt(1, lootBox.getLocation().hashCode());
                 ps.setString(2, serializeLocation(lootBox.getLocation()));
                 ps.setString(3, lootBox.getLootTableName());
-                ps.setString(4, serializeLootedPlayers(lootBox.getLootedPlayers()));
-                ps.setInt(5, lootBox.getCooldown());
+                ps.setBoolean(4, lootBox.getType());
+                ps.setString(5, serializeLootedPlayers(lootBox.getLootedPlayers()));
+                ps.setInt(6, lootBox.getCooldown());
                 ps.executeUpdate();
                 System.out.println("Successfully added LootBox with hashCode: " + lootBox.getLocation().hashCode());
             }
@@ -60,14 +62,15 @@ public class LootBoxTable extends AbstractTable<LootBox> {
 
     @Override
     public void update(LootBox lootBox) {
-        String updateSQL = "UPDATE " + dbName + " SET location = ?, lootTableName = ?, lootedPlayers = ?, cooldown = ? WHERE hash_code = ?;";
+        String updateSQL = "UPDATE " + dbName + " SET location = ?, lootTableName = ?, type = ?, lootedPlayers = ?, cooldown = ? WHERE hash_code = ?;";
         executeTransaction(conn -> {
             try (PreparedStatement ps = conn.prepareStatement(updateSQL)) {
-                ps.setString(1, serializeLocation(lootBox.getLocation()));
-                ps.setString(2, lootBox.getLootTableName());
-                ps.setString(3, serializeLootedPlayers(lootBox.getLootedPlayers()));
-                ps.setInt(4, lootBox.getCooldown());
-                ps.setInt(5, lootBox.getLocation().hashCode());
+            	ps.setInt(1, lootBox.getLocation().hashCode());
+                ps.setString(2, serializeLocation(lootBox.getLocation()));
+                ps.setString(3, lootBox.getLootTableName());
+                ps.setBoolean(4, lootBox.getType());
+                ps.setString(5, serializeLootedPlayers(lootBox.getLootedPlayers()));
+                ps.setInt(6, lootBox.getCooldown());
                 ps.executeUpdate();
             }
         }, "Failed to update LootBox");
@@ -112,10 +115,11 @@ public class LootBoxTable extends AbstractTable<LootBox> {
                     if (rs.next()) {
                         Location location = deserializeLocation(rs.getString("location"));
                         String lootTableName = rs.getString("lootTableName");
+                        boolean type = rs.getBoolean("type");
                         String lootedPlayersStr = rs.getString("lootedPlayers");
                         int cooldown = rs.getInt("cooldown");
                         Map<UUID, Integer> lootedPlayers = deserializeLootedPlayers(lootedPlayersStr);
-                        lootBox[0] = new LootBox(location, lootTableName, cooldown, lootedPlayers);
+                        lootBox[0] = new LootBox(location, lootTableName, type, cooldown, lootedPlayers);
                     }
                 }
             }
@@ -135,10 +139,11 @@ public class LootBoxTable extends AbstractTable<LootBox> {
                     Location location = deserializeLocation(rs.getString("location"));
                     int hashCode = location.hashCode();
                     String lootTableName = rs.getString("lootTableName");
+                    boolean type = rs.getBoolean("type");
                     String lootedPlayersStr = rs.getString("lootedPlayers");
                     int cooldown = rs.getInt("cooldown");
                     Map<UUID, Integer> lootedPlayers = deserializeLootedPlayers(lootedPlayersStr);
-                    LootBox lootBox = new LootBox(location, lootTableName, cooldown, lootedPlayers);
+                    LootBox lootBox = new LootBox(location, lootTableName, type, cooldown, lootedPlayers);
                     lootBoxes.put(hashCode, lootBox);
                 }
             }

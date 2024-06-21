@@ -54,13 +54,15 @@ public class LootBoxOpenEvent extends Sender implements Listener {
     		// Якщо в руках спец предмет, то зупинити цей код
     		boolean loottable = false;
         	boolean cooldownSeconds = false;
+        	boolean type = false;
         	ItemStack item = player.getInventory().getItemInMainHand();
             if (item.getItemMeta() != null) {
             	
             	loottable = item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(lootBoxes, "lootTable"));
                 cooldownSeconds = item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(lootBoxes, "cooldownSeconds"));
+                type = item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(lootBoxes, "type"));
             }
-            if (loottable == false || cooldownSeconds == false) {
+            if (loottable == false || cooldownSeconds == false || type == false) {
             	event.setCancelled(true);
                 
                 if (LootBoxCooldown.CanBeLooted(player, lootBox) == true) {
@@ -68,7 +70,7 @@ public class LootBoxOpenEvent extends Sender implements Listener {
             		lootBox.addLootedPlayer(player.getUniqueId());
                 	
             		Location newLoc = new Location(loc.getWorld(), loc.getX(), loc.getY() + 1, loc.getZ());
-            	    LootBoxesDrop.dropLootBoxContents(lootBox, newLoc);
+            	    LootBoxesDrop.openingLootBox(player, lootBox, newLoc);
                     
                     Sound sound = Sound.BLOCK_CHEST_OPEN;
                     float volume = 1;

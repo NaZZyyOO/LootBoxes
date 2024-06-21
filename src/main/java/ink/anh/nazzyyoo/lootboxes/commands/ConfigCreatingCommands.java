@@ -246,19 +246,24 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
             return false;
 	    }
 	    
-    	if (args.length != 3) {
+    	if (args.length != 4) {
     		return false;
     	}
         
     	String lootTable = args[1];
         String cooldown = args[2];
+        String type = args[3];
+        if (type != "true" || type != "false") {
+        	sendMessage(new MessageForFormatting("lootboxes_box_unknown_type", new String[] {type}), MessageType.NORMAL, sender);
+        	return false;
+        }
 
         ItemStack item = new ItemStack(Material.STICK);
         ItemMeta meta = item.getItemMeta();
 
         meta.getPersistentDataContainer().set(new NamespacedKey(LootBoxes, "lootTable"), PersistentDataType.STRING, lootTable);
         meta.getPersistentDataContainer().set(new NamespacedKey(LootBoxes, "cooldownSeconds"), PersistentDataType.STRING, cooldown);
-
+        meta.getPersistentDataContainer().set(new NamespacedKey(LootBoxes, "type"), PersistentDataType.STRING, type);
         item.setItemMeta(meta);
 
         if (sender instanceof Player) {	

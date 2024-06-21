@@ -9,12 +9,14 @@ public class LootBox {
 	
 	private Location location;
     private String lootTableName;
+    private boolean type;
     private Map<UUID, Integer> lootedPlayers;
     private int cooldown;
 
-    public LootBox(Location location, String lootTableName, int cooldown, Map<UUID, Integer> lootedPlayers) {
+    public LootBox(Location location, String lootTableName, boolean type ,int cooldown, Map<UUID, Integer> lootedPlayers) {
         this.location = location;
         this.lootTableName = lootTableName;
+        this.type = type;
         this.lootedPlayers = lootedPlayers;
         this.cooldown = cooldown;
     }
@@ -25,6 +27,9 @@ public class LootBox {
 
     public String getLootTableName() {
         return lootTableName;
+    }
+    public boolean getType() {
+    	return type;
     }
 
     public Map<UUID, Integer> getLootedPlayers() {
@@ -50,6 +55,9 @@ public class LootBox {
     public void addLootedPlayer(UUID playerUUID) {
         int currentTime = (int) (System.currentTimeMillis() / 1000);
         lootedPlayers.put(playerUUID, currentTime);
+    }
+    public void setType(boolean type) {
+    	this.type = type;
     }
 
     @Override

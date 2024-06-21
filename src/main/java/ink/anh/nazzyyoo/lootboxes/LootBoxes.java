@@ -5,6 +5,7 @@ import ink.anh.nazzyyoo.lootboxes.commands.ConfigCreatingCommands;
 import ink.anh.nazzyyoo.lootboxes.commands.ConfigCreatingTabCompleter;
 import ink.anh.nazzyyoo.lootboxes.events.LootBoxOpenEvent;
 import ink.anh.nazzyyoo.lootboxes.events.LootBoxesMarking;
+import ink.anh.nazzyyoo.lootboxes.gui.LootBoxGuiListener;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootBoxManager;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootTableManager;
 
@@ -33,6 +34,7 @@ public class LootBoxes extends JavaPlugin {
         
         getServer().getPluginManager().registerEvents(new LootBoxOpenEvent(this), this);
         getServer().getPluginManager().registerEvents(new LootBoxesMarking(this), this);
+        getServer().getPluginManager().registerEvents(new LootBoxGuiListener(), this);
     }
 
     public GlobalManager getGlobalManager() {
