@@ -18,12 +18,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LootBoxesDrop {
-	// Мапа для збереження інформації який лутбокс був відкритий гравцем(для лутбокса типу true)
-	private static Map<UUID, LootBox> playerLootBox;
 	
-	private LootBoxesDrop() {
-		playerLootBox = new ConcurrentHashMap<>();
-	}
+	// Мапа для збереження інформації який лутбокс був відкритий гравцем(для лутбокса типу true)
+	private static Map<UUID, LootBox> playerLootBox = new ConcurrentHashMap<>();
 
     public static void openingLootBox(Player player, LootBox lootBox, Location loc) {
     	
