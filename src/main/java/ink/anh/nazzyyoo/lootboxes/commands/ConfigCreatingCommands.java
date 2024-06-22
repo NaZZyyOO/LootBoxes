@@ -257,7 +257,8 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
     	String lootTable = args[1];
         String cooldown = args[2];
         String type = args[3];
-        if (type == "true" || type == "false") {
+        
+        if (type.equals("true") || type.equals("false")) {
         	ItemStack item = new ItemStack(Material.STICK);
             ItemMeta meta = item.getItemMeta();
 
@@ -272,7 +273,6 @@ public class ConfigCreatingCommands extends Sender implements CommandExecutor {
                 sendMessage(new MessageForFormatting("lootboxes_loottable_tool", new String[] {lootTable, cooldown }), MessageType.NORMAL, sender);
                 return true;
             }
-        	sendMessage(new MessageForFormatting("lootboxes_box_unknown_type", new String[] {type}), MessageType.NORMAL, sender);
         	return false;
         } else {
         	sendMessage(new MessageForFormatting("lootboxes_box_unknown_type", new String[] {type}), MessageType.NORMAL, sender);
