@@ -11,8 +11,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import ink.anh.nazzyyoo.lootboxes.lootbox.LootBox;
-import ink.anh.nazzyyoo.lootboxes.utils.LootBoxesDrop;
 
 
 public class LootBoxGuiListener implements Listener {
@@ -40,12 +38,10 @@ public class LootBoxGuiListener implements Listener {
 		 if (event.getInventory().getHolder() instanceof LootBoxHolder) {
 			 
 	         Inventory inventory = event.getInventory();
-	         UUID playerID = event.getPlayer().getUniqueId();
 	         
-	         LootBox lootBox = LootBoxesDrop.getPlayerLootBox(playerID);
+	         Location locBox = ((LootBoxHolder) event.getInventory().getHolder()).getLoc();
 	         
-	         if (lootBox != null) {
-	        	 Location locBox = lootBox.getLocation();
+	         if (locBox != null) {
 		         Location loc = new Location(locBox.getWorld(), locBox.getX(), locBox.getY() + 1, locBox.getZ());
 		         for (ItemStack item : inventory.getContents()) {
 		        	 
@@ -54,7 +50,6 @@ public class LootBoxGuiListener implements Listener {
 		                    loc.getWorld().dropItem(loc, item);
 		             }
 		         }
-		         LootBoxesDrop.removePlayerLootBox(playerID);
 	         }
 	     }
 	 }

@@ -18,9 +18,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class LootBoxesDrop {
-	
-	// Мапа для збереження інформації який лутбокс був відкритий гравцем(для лутбокса типу true)
-	private static Map<UUID, LootBox> playerLootBox = new ConcurrentHashMap<>();
 
     public static void openingLootBox(Player player, LootBox lootBox, Location loc) {
     	
@@ -65,11 +62,9 @@ public class LootBoxesDrop {
                 			
                 	    // Якщо тип лутбокса true(відкривання кастомного інвентаря)
                 		} else if (type == true) {
-                			UUID playerId = player.getUniqueId();
-                		    addPlayerLootBox(playerId, lootBox);
                 			
                 			SyncExecutor.runSync(() -> {
-                				LootBoxHolder holder = new LootBoxHolder("LootBox");
+                				LootBoxHolder holder = new LootBoxHolder("LootBox", lootBox.getLocation());
                 	            ItemStack[] items = new ItemStack[27];
                 	            int slot;
                                 do {
@@ -86,16 +81,5 @@ public class LootBoxesDrop {
                 
         	}
     	});
-    }
-    // Методи для додавання, отримання та видалення інформації про відкритий лутбокс
-    public static void addPlayerLootBox(UUID playerId, LootBox lootBox) {
-    	playerLootBox.put(playerId, lootBox);
-    }
-    
-    public static LootBox getPlayerLootBox(UUID playerId) {
-    	return playerLootBox.get(playerId);
-    }
-    public static void removePlayerLootBox(UUID playerID) {
-    	playerLootBox.remove(playerID);
     }
 }
