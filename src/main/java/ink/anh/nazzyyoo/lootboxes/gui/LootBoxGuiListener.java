@@ -44,16 +44,18 @@ public class LootBoxGuiListener implements Listener {
 	         
 	         LootBox lootBox = LootBoxesDrop.getPlayerLootBox(playerID);
 	         
-	         Location locBox = lootBox.getLocation();
-	         Location loc = new Location(locBox.getWorld(), locBox.getX(), locBox.getY() + 1, locBox.getZ());
-	         for (ItemStack item : inventory.getContents()) {
-	        	 
-	             if (item != null) {
-	                	
-	                    loc.getWorld().dropItem(loc, item);
-	             }
+	         if (lootBox != null) {
+	        	 Location locBox = lootBox.getLocation();
+		         Location loc = new Location(locBox.getWorld(), locBox.getX(), locBox.getY() + 1, locBox.getZ());
+		         for (ItemStack item : inventory.getContents()) {
+		        	 
+		             if (item != null) {
+		                	
+		                    loc.getWorld().dropItem(loc, item);
+		             }
+		         }
+		         LootBoxesDrop.removePlayerLootBox(playerID);
 	         }
-	         LootBoxesDrop.removePlayerLootBox(playerID);
 	     }
 	 }
 }
