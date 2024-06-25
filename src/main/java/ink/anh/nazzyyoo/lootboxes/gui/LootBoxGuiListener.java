@@ -1,9 +1,8 @@
 package ink.anh.nazzyyoo.lootboxes.gui;
 
-import java.util.UUID;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -46,8 +45,12 @@ public class LootBoxGuiListener implements Listener {
 		         for (ItemStack item : inventory.getContents()) {
 		        	 
 		             if (item != null) {
+		            	 Sound sound = Sound.BLOCK_CHEST_CLOSE;
+		                 float volume = 1;
+		                 float pitch = 0.4f;
+		                 loc.getWorld().playSound(loc, sound, volume, pitch);
 		                	
-		                    loc.getWorld().dropItem(loc, item);
+		                 loc.getWorld().dropItem(loc, item);
 		             }
 		         }
 	         }
