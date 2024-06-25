@@ -1,5 +1,7 @@
 package ink.anh.nazzyyoo.lootboxes.utils;
 
+import java.util.Random;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -11,11 +13,6 @@ import ink.anh.nazzyyoo.lootboxes.lootbox.LootBox;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootItem;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootTable;
 import ink.anh.nazzyyoo.lootboxes.lootbox.LootTableManager;
-
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class LootBoxesDrop {
 
@@ -66,11 +63,14 @@ public class LootBoxesDrop {
                 			SyncExecutor.runSync(() -> {
                 				LootBoxHolder holder = new LootBoxHolder("LootBox", lootBox.getLocation());
                 	            ItemStack[] items = new ItemStack[27];
-                	            int slot;
-                                do {
-                                    slot = random.nextInt(27);
-                                } while (items[slot] != null);
-                                items[slot] = itemStack;
+                	            Random randomSlot = new Random();
+                	            for (int i = 0; i < items.length; i++) {
+                	                int slot;
+                	                do {
+                	                    slot = randomSlot.nextInt(items.length);
+                	                } while (items[slot] != null);
+                	                items[slot] = itemStack;
+                	            }    
                                 holder.addItems(items);
                                 player.openInventory(holder.getInventory());
                 			});
