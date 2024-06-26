@@ -17,73 +17,69 @@ import ink.anh.nazzyyoo.lootboxes.lootbox.LootTableManager;
 public class LootBoxesDrop {
 
     public static void openingLootBox(Player player, LootBox lootBox, Location loc) {
-    	
-    	if (lootBox == null || loc == null) {
-    		LootBoxes.getInstance().getLogger().warning("LootBox or Location is null.");
+        if (lootBox == null || loc == null) {
+            LootBoxes.getInstance().getLogger().warning("LootBox or Location is null.");
             return;
         }
-    	
-    	String lootTableName = lootBox.getLootTableName();
-    	LootTableManager tableManager = LootTableManager.getInstance();
-    	
-    	LootTable lootTable = tableManager.getLootTable(lootTableName);
-    	// Якщо таблиці луту не існує то закінчити метод
-    	if (lootTable == null) {
-    		LootBoxes.getInstance().getLogger().warning("Loot table not found: " + lootTableName);
-            return;
-        }
-    	// Асинхронно запускаємо обробку таблиці луту
-    	SyncExecutor.runAsync(() -> {
-    		boolean type = lootBox.getType();
-    		
-    		// Змінні для lootbox type "true"
-    		LootBoxHolder holder = new LootBoxHolder("LootBox", lootBox.getLocation());
-    		ItemStack[] items = new ItemStack[27];
-    		
-    		// Отримуємо всі предмети таблиці та пробігаємося по них
-    		for (LootItem lootItem : lootTable.getLootItems()) {
-        		double chance = lootItem.getChance();
-                int minQuantity = lootItem.getMinQuantity();
-                int maxQuantity = lootItem.getMaxQuantity();
-                
-                Random random = new Random();
-                double randomNumber = random.nextDouble() * 100;
-                // Якщо шанс справджується
-                if (randomNumber <= chance) {
-                	ItemStack itemStack = lootItem.getItem();
-                	if (itemStack != null) {
-                        
-                		int quantity = random.nextInt(maxQuantity - minQuantity + 1) + minQuantity;
-                		itemStack.setAmount(quantity);
-                		
-                		// Якщо тип лутбокса false(випадіння предметів на над лутбоксом)
-                		if (type == false) {
-                			SyncExecutor.runSync(() -> {
-                                loc.getWorld().dropItem(loc, itemStack);
-                    		});
-                			
-                	    // Якщо тип лутбокса true(відкривання кастомного інвентаря)
-                		} else if (type == true) {
-                			
-                			Random randomSlot = new Random();
-            	            for (int i = 0; i < items.length; i++) {
-            	                int slot;
-            	                do {
-            	                    slot = randomSlot.nextInt(items.length);
-            	                } while (items[slot] != null);
-            	                items[slot] = itemStack;
-            	            }
-                		}
 
+        String lootTableName = lootBox.getLootTableName();
+        LootTable lootTable = getLootTable(lootTableName);
+        if (lootTable == null) return;
+
+        SyncExecutor.runAsync(() -> {
+        	boolean type = lootBox.getType();
+            ItemStack[] items = new ItemStack[27];
+            fillItemsArray(lootTable, loc, items, type);
+
+            if (type == true) {
+                openCustomInventory(player, lootBox, items);
+            }
+        });
+    }
+
+    private static LootTable getLootTable(String lootTableName) {
+        LootTableManager tableManager = LootTableManager.getInstance();
+        LootTable lootTable = tableManager.getLootTable(lootTableName);
+        if (lootTable == null) {
+            LootBoxes.getInstance().getLogger().warning("Loot table not found: " + lootTableName);
+        }
+        return lootTable;
+    }
+
+    private static void fillItemsArray(LootTable lootTable, Location loc, ItemStack[] items, boolean type) {
+        Random random = new Random();
+        for (LootItem lootItem : lootTable.getLootItems()) {
+            if (random.nextDouble() * 100 <= lootItem.getChance()) {
+                ItemStack itemStack = lootItem.getItem();
+                if (itemStack != null) {
+                    itemStack.setAmount(random.nextInt(lootItem.getMaxQuantity() - lootItem.getMinQuantity() + 1) + lootItem.getMinQuantity());
+                    if (type == false) {
+                    	SyncExecutor.runSync(() -> {
+                            loc.getWorld().dropItem(loc, itemStack);
+                         });
+                    } else {
+                        addItemToRandomSlot(items, itemStack);
                     }
                 }
-                
-        	}
-    		// Додати предмети в інвентар та відкрити цей інвентар
-    		SyncExecutor.runSync(()	-> {
-    		    holder.addItems(items);
-                player.openInventory(holder.getInventory());
-    		});
-    	});
+            }
+        }
+    }
+
+    private static void addItemToRandomSlot(ItemStack[] items, ItemStack itemStack) {
+        Random random = new Random();
+        int slot;
+        do {
+            slot = random.nextInt(items.length);
+        } while (items[slot] != null);
+        items[slot] = itemStack;
+    }
+
+    private static void openCustomInventory(Player player, LootBox lootBox, ItemStack[] items) {
+        LootBoxHolder holder = new LootBoxHolder("LootBox", lootBox.getLocation());
+        holder.addItems(items);
+        SyncExecutor.runSync(() -> {
+        	
+           player.openInventory(holder.getInventory());
+        });
     }
 }
