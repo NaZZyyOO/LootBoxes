@@ -45,9 +45,9 @@ public class LootBoxGuiListener implements Listener {
 		         for (ItemStack item : inventory.getContents()) {
 		        	 
 		             if (item != null) {
-		            	 Sound sound = Sound.BLOCK_CHEST_CLOSE;
+		            	 Sound sound = Sound.BLOCK_BARREL_CLOSE;
 		                 float volume = 1;
-		                 float pitch = 0.4f;
+		                 float pitch = 0.6f;
 		                 loc.getWorld().playSound(loc, sound, volume, pitch);
 		                	
 		                 loc.getWorld().dropItem(loc, item);

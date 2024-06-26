@@ -36,6 +36,11 @@ public class LootBoxesDrop {
     	SyncExecutor.runAsync(() -> {
     		boolean type = lootBox.getType();
     		
+    		// Змінні для lootbox type "true"
+    		LootBoxHolder holder = new LootBoxHolder("LootBox", lootBox.getLocation());
+    		ItemStack[] items = new ItemStack[27];
+    		
+    		// Отримуємо всі предмети таблиці та пробігаємося по них
     		for (LootItem lootItem : lootTable.getLootItems()) {
         		double chance = lootItem.getChance();
                 int minQuantity = lootItem.getMinQuantity();
@@ -61,8 +66,6 @@ public class LootBoxesDrop {
                 		} else if (type == true) {
                 			
                 			SyncExecutor.runSync(() -> {
-                				LootBoxHolder holder = new LootBoxHolder("LootBox", lootBox.getLocation());
-                	            ItemStack[] items = new ItemStack[27];
                 	            Random randomSlot = new Random();
                 	            for (int i = 0; i < items.length; i++) {
                 	                int slot;
@@ -71,8 +74,6 @@ public class LootBoxesDrop {
                 	                } while (items[slot] != null);
                 	                items[slot] = itemStack;
                 	            }    
-                                holder.addItems(items);
-                                player.openInventory(holder.getInventory());
                 			});
                 		}
 
@@ -80,6 +81,10 @@ public class LootBoxesDrop {
                 }
                 
         	}
+    		
+    		// Додати предмети в інвентар та відкрити цей інвентар
+    		holder.addItems(items);
+            player.openInventory(holder.getInventory());
     	});
     }
 }
