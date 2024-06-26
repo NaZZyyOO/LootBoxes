@@ -65,26 +65,25 @@ public class LootBoxesDrop {
                 	    // Якщо тип лутбокса true(відкривання кастомного інвентаря)
                 		} else if (type == true) {
                 			
-                			SyncExecutor.runSync(() -> {
-                	            Random randomSlot = new Random();
-                	            for (int i = 0; i < items.length; i++) {
-                	                int slot;
-                	                do {
-                	                    slot = randomSlot.nextInt(items.length);
-                	                } while (items[slot] != null);
-                	                items[slot] = itemStack;
-                	            }    
-                			});
+                			Random randomSlot = new Random();
+            	            for (int i = 0; i < items.length; i++) {
+            	                int slot;
+            	                do {
+            	                    slot = randomSlot.nextInt(items.length);
+            	                } while (items[slot] != null);
+            	                items[slot] = itemStack;
+            	            }
                 		}
 
                     }
                 }
                 
         	}
-    		
     		// Додати предмети в інвентар та відкрити цей інвентар
-    		holder.addItems(items);
-            player.openInventory(holder.getInventory());
+    		SyncExecutor.runSync(()	-> {
+    		    holder.addItems(items);
+                player.openInventory(holder.getInventory());
+    		});
     	});
     }
 }
